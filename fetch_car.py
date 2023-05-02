@@ -59,4 +59,4 @@ class fetch_car():
             reader=csv.reader(db, delimiter=";")
 
             row = [r for idx, r in enumerate(reader) if idx == index]
-            return row[0]
+            return row[0][0]
