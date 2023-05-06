@@ -7,7 +7,7 @@ import cv2
 
 img_fetch = fetch_car()
 
-images = img_fetch.load_by_numberplate('EFR-179')
+images = img_fetch.load_by_numberplate('FFX-966')
 
 # Initialisaiton: Load trained model
 model = YOLO('trained_90.pt')
@@ -24,7 +24,12 @@ def locate_plate(model, image):
         print("Error: More than one licence plate detected on image") # Itt is szükség esetén jól jöhet, ha megmondja, melyik képen hasalt el
 
     # Return bounding box coordinates of detected license plate as a numpy array
-    return result[0].boxes.xyxy[0].cpu().numpy()
+    plate_coordinates = result[0].boxes.xyxy[0].cpu().numpy().astype(int)
+    extracted_plate = image[plate_coordinates[1]:plate_coordinates[3], plate_coordinates[0]:plate_coordinates[2]]
+    cv2.imshow("Plate", extracted_plate)
+    cv2.waitKey(0)
+
+    return plate_coordinates
 
 # Hogy lásd, mi az output
 print(locate_plate(model, images[1]))

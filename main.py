@@ -25,19 +25,19 @@ def main():
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
 
-    images = img_fetch.load_by_numberplate('MRR-889')
-    print(img_to_txt.get_text(images[0])) 
+    '''images = img_fetch.load_by_numberplate('GFX-767')
+    cv2.imshow("Car", images[2])
     plate = img_plate_detect.get_plate_image(images[1])
-    cv2.imshow("Numberplate", images[1])
-    cv2.waitKey(0)
-    cv2.imshow("Numberplate", plate)
     print(img_to_txt.get_text(plate))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    cv2.imshow("Numberplate", plate)
+    cv2.waitKey(0)'''
+    
 
-    #test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
-    # MRR-889; FFX-966 például fixen működik
+    # Jók: MRR-889; FFX-966; LLP-676; XYD-635; FCR-841; LPY-437
+    # Rosszak: FAU-023; JTZ-465; GFX-767; PWR-923; HON-804; DEL-011; HFP-620; GTH-057; AYA-599; NWX-474; RFW-499
+
 
 if __name__ == "__main__":
     main()
