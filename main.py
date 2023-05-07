@@ -4,17 +4,16 @@ from detect_plate import detect_plate
 import cv2
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 200
-    test_number = 100
+    start_index = 800
+    test_number = 50
     success_numbers = 0
     for i in range(start_index, start_index+test_number):
         images = img_fetch.load_by_index(i)
-        # A csak rendszámot tartalmazó kép : images[0]
         plate = img_plate_detect.get_plate_image(images[1])
         original_text = img_fetch.get_numberplate_by_index(i)
         detected_text = img_to_text.get_text(plate)
-        #print(original_text)
-        #print(detected_text)
+        #cv2.imwrite('image_buffer/plate'+str(i)+'_'+detected_text+'.png', plate)
+        
         print(i)
         if(original_text == detected_text): success_numbers+=1
 
@@ -26,7 +25,7 @@ def main():
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
 
-    '''images = img_fetch.load_by_numberplate('DEL-011')
+    '''images = img_fetch.load_by_index(520)
     cv2.imshow("Car", images[2])
     plate = img_plate_detect.get_plate_image(images[1])
     print(img_to_txt.get_text(plate))

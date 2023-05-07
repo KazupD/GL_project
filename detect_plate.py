@@ -37,13 +37,13 @@ class detect_plate():
     
     def process_image(self, image): # KIEMELT KÉP FELDOLGOZÁSA IDE JÖHET
 
-        resized = self.perscpective_correction(image=image, general_resize_factor=1.2)
+        resized = self.perscpective_correction(image=image, general_resize_factor=1.5)
 
-        crop_img = resized[int(resized.shape[0]*0.05):int(resized.shape[0]*0.95), int(resized.shape[1]*0.17):int(resized.shape[1]*0.96)]
+        crop_img = resized[int(resized.shape[0]*0.07):int(resized.shape[0]*0.93), int(resized.shape[1]*0.165):int(resized.shape[1]*0.96)]
 
         gray_image = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
-        blur = cv2.GaussianBlur(gray_image, (3,3), cv2.BORDER_DEFAULT)
+        blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
         
         return blur
     
