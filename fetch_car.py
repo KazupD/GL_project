@@ -22,9 +22,14 @@ class fetch_car():
             for i in range(len(car_data)):
                 if(car_data[i].startswith("http")):
                     
-                    req = self.opener.open(car_data[i])
-                    img = np.asarray(bytearray(req.read()), dtype=np.uint8)
-                    images.append(cv2.imdecode(img, -1))
+                    try:
+                        req = self.opener.open(car_data[i])
+                        img = np.asarray(bytearray(req.read()), dtype=np.uint8)
+                        images.append(cv2.imdecode(img, -1))
+                    except Exception as e:
+                        print(e)
+                        print("Failed Request")
+                        return None
                     
             return images
 
@@ -39,9 +44,14 @@ class fetch_car():
             for i in range(len(car_data)):
                 if(car_data[i].startswith("http")):
                     
-                    req = self.opener.open(car_data[i])
-                    img = np.asarray(bytearray(req.read()), dtype=np.uint8)
-                    images.append(cv2.imdecode(img, -1))
+                    try:
+                        req = self.opener.open(car_data[i])
+                        img = np.asarray(bytearray(req.read()), dtype=np.uint8)
+                        images.append(cv2.imdecode(img, -1))
+                    except Exception as e:
+                        print(e)
+                        print("Failed Request")
+                        return None
                     
             return images
         

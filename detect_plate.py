@@ -1,6 +1,7 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
+import functools
 
 class detect_plate():
     def __init__(self):
@@ -37,13 +38,18 @@ class detect_plate():
     
     def process_image(self, image): # KIEMELT KÉP FELDOLGOZÁSA IDE JÖHET
 
-        resized = self.perscpective_correction(image=image, general_resize_factor=1.5)
+        resized = self.perscpective_correction(image=image, general_resize_factor=1)
 
-        crop_img = resized[int(resized.shape[0]*0.07):int(resized.shape[0]*0.93), int(resized.shape[1]*0.165):int(resized.shape[1]*0.96)]
+        crop_img = resized[int(resized.shape[0]*0.08):int(resized.shape[0]*0.92), int(resized.shape[1]*0.16):int(resized.shape[1]*0.96)]
 
-        gray_image = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+        unisize = cv2.resize(crop_img, (440, 110), interpolation = cv2.INTER_AREA)
+
+        gray_image = cv2.cvtColor(unisize, cv2.COLOR_BGR2GRAY)
 
         blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
+
+        #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 45, 15)
+
         
         return blur
     
@@ -59,6 +65,7 @@ class detect_plate():
         horizontally_resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
         return horizontally_resized
+    
 
 
 
