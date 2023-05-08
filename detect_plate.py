@@ -34,6 +34,7 @@ class detect_plate():
             return image # Eredeti kép visszaadása
 
         return self.process_image(extracted_plate)
+        #return extracted_plate
     
     def process_image(self, image): # KIEMELT KÉP FELDOLGOZÁSA IDE JÖHET
 
