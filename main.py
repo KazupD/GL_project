@@ -8,7 +8,7 @@ path = "output"
 if not os.path.exists(path): os.makedirs(path)
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 1343
+    start_index = 100
     test_number = 10
     success_numbers = 0
     for i in range(start_index, start_index+test_number):
