@@ -7,6 +7,7 @@ class image_to_text():
         self.char_whitelist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-'
 
     def get_text(self, image): # SZÖVEG FELISMERŐ OCR HASZNÁLATA, MÁS NE LEGYEN ITT
+        if(image is None): return "Text not recognized"
         try:
             #text = pytesseract.image_to_string(image, config ='--psm 6')
             text = pytesseract.image_to_string(image, lang='eng', config='--psm 10 --oem 3 -c tessedit_char_whitelist='+self.char_whitelist)
@@ -14,14 +15,14 @@ class image_to_text():
             print("Error: Text recognition OCR not working")
             print(e)
             return "Text not recognized"
-        if(text is None or len(text) < 2):
+        if(text is None or len(text) < 6 or len(text) > 10):
             print("Error: Text recognition OCR working, but returns invalid string")
             return "Text not recognized"
         return self.format_text(text)
     
     def format_text(self, text): # SZÖVEG FORMÁZÁSA, REGEX, STB IDE JÖHET
         try:
-            while(text[0].isupper() is False or text[0].isalpha() is False):  text = text[1:] # Zászló, EU jel, kis H betű leszedése
+            while(text[0].isupper() is False or text[0].isalpha() is False and len(text) > 1):  text = text[1:] # Zászló, EU jel, kis H betű leszedése
             temp_text_1 = ''
             for i in range(len(text)):
                 if(text[i].isnumeric() or (text[i].isalpha() and text[i].isupper()) or text[i]=='-'):

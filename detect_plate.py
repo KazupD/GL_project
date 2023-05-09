@@ -12,27 +12,27 @@ class detect_plate():
             result = self.model.predict(source=image, conf=0.5, verbose=False)
             if len(result) == 0:
                 print("Error: Could not find licence plate on image")
-                return image # Eredeti kép visszaadása
+                return None
 
             if len(result) > 1:
                 print("Error: More than one licence plate detected on image")
-                return image # Eredeti kép visszaadása
+                return None
             if result is None or result == 0:
                 print("Error: Plate returns None")
-                return image # Eredeti kép visszaadása
+                return None
         except:
             print("Error: Plate locating AI not working")
-            return image # Eredeti kép visszaadása
+            return None
         try:
             plate_coordinates = result[0].boxes.xyxy[0].cpu().numpy().astype(int)
             extracted_plate = image[plate_coordinates[1]:plate_coordinates[3], plate_coordinates[0]:plate_coordinates[2]]
         except:
             print("Error: Result converting not working")
-            return image # Eredeti kép visszaadása
+            return None
 
         if(extracted_plate.shape[0] == 0 or extracted_plate.shape[1] == 0):
             print("Error: Extracted plate size is 0x0")
-            return image # Eredeti kép visszaadása
+            return None
 
         return self.process_image(extracted_plate)
     

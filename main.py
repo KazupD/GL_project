@@ -3,14 +3,16 @@ from image_to_text import image_to_text
 from detect_plate import detect_plate
 import cv2
 import os
+import time
 
 path = "output"
 if not os.path.exists(path): os.makedirs(path)
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 100
-    test_number = 10
+    start_index = 0
+    test_number = 1340
     success_numbers = 0
+    start_time = time.time()
     for i in range(start_index, start_index+test_number):
         images = img_fetch.load_by_index(i)
         if(images is not None): # Ha nincs HTTP error
@@ -22,13 +24,18 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
             print(detected_text)
             is_ok = bool(original_text == detected_text)
             if(is_ok): success_numbers+=1
-            cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
+            #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
             print("Success? -> " +  str(is_ok))
             print("-------------------------------")
 
 
-
+    print("Tested on : " +  str(test_number) + " images")
     print("Success rate : " + str((success_numbers/test_number)*100) + "%")
+    finish_time = time.time()
+    total_time = round(finish_time-start_time, 3)
+    average_time = round(total_time/test_number, 3)
+    print("Total time: " + str(total_time) + " s")
+    print("Average time: " + str(average_time) + " s")
 
 
 def main():
@@ -36,7 +43,7 @@ def main():
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
 
-    '''images = img_fetch.load_by_numberplate("NWX-474")
+    '''images = img_fetch.load_by_numberplate("AYA-599")
     cv2.imshow("Car", images[2])
     plate = img_plate_detect.get_plate_image(images[1])
     print(img_to_txt.get_text(plate))
