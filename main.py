@@ -3,6 +3,7 @@ from image_to_text import image_to_text
 from detect_plate import detect_plate
 import cv2
 import os
+import csv
 import time
 
 path = "output"
@@ -38,6 +39,26 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
     print("Average time: " + str(average_time) + " s")
 
 
+def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
+    file_to_complete_data = []
+    with open('database/HF_final_database_beta.csv', encoding="utf8") as db:
+        file=csv.reader(db, delimiter=";")
+        rowindex = 0
+        for row in file:
+            numberplate_value = ''
+            image = img_fetch.load_image_by_url(row[1])
+            if(image is not None):
+                plate = img_plate_detect.get_plate_image(image)
+                numberplate_value = img_to_text.get_text(plate)
+            file_to_complete_data.append([numberplate_value, row[1], row[2]])
+            print(rowindex)
+            rowindex+=1
+        
+    with open('database/CirmosCicak.csv', 'w', encoding="utf8", newline ='') as db:  
+        write = csv.writer(db, delimiter=";")
+        write.writerows(file_to_complete_data)
+
+
 def main():
     img_fetch = fetch_car()
     img_plate_detect = detect_plate()
@@ -51,10 +72,8 @@ def main():
     cv2.waitKey(0)'''
     
 
-    test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-
-    # Jók: MRR-889; FFX-966; LLP-676; XYD-635; FCR-841; LPY-437; FAU-023; NWX-474
-    # Rosszak: JTZ-465; GFX-767; PWR-923; HON-804; DEL-011; HFP-620; GTH-057; AYA-599; RFW-499
+    #test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
 
 if __name__ == "__main__":

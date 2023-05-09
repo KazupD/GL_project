@@ -70,3 +70,14 @@ class fetch_car():
 
             row = [r for idx, r in enumerate(reader) if idx == index]
             return row[0][0]
+        
+
+    def load_image_by_url(self, url):
+        try:
+            req = self.opener.open(url)
+            img = np.asarray(bytearray(req.read()), dtype=np.uint8)
+            return cv2.imdecode(img, -1)
+        except Exception as e:
+            print(e)
+            print("Failed Request")
+            return None
