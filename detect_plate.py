@@ -38,29 +38,28 @@ class detect_plate():
     
     def process_image(self, image): # KIEMELT KÉP FELDOLGOZÁSA IDE JÖHET
 
-        #kernel2x2 = np.ones((2, 2), np.uint8)
-        #im_dilated = cv2.dilate(im_bw, np.ones((2, 2), np.uint8))
+        resized = self.perscpective_correction(image=image, general_resize_factor=1.5)
 
-        scale_percent = 520/110 # percent of original size
-        general_resize_factor = 1.5
-        width = int((image.shape[0] * scale_percent)*general_resize_factor)
-        height = int((image.shape[0])*general_resize_factor)
-        dim = (width, height)
-  
-        # resize image
-        resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
-
-        crop_img = resized[0:resized.shape[0], int(resized.shape[1]*0.16):int(resized.shape[1]*0.96)]
+        crop_img = resized[int(resized.shape[0]*0.07):int(resized.shape[0]*0.93), int(resized.shape[1]*0.165):int(resized.shape[1]*0.96)]
 
         gray_image = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
 
-        blur = cv2.GaussianBlur(gray_image, (5,5), cv2.BORDER_DEFAULT)
-
-        (thresh, im_bw) = cv2.threshold(blur, 200, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-
-        im_eroded = cv2.erode(im_bw, np.ones((2, 2), np.uint8))
-
-        #blur = cv2.GaussianBlur(crop_img, (3,3), cv2.BORDER_DEFAULT)
+        blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
         
-        return im_eroded
+        return blur
+    
+    def perscpective_correction(self, image, general_resize_factor):
+        scale_percent = 520/110 # percent of original size
+        initial_width = image.shape[1]
+        initial_height = image.shape[0]
+
+        width = int((initial_height * scale_percent)*general_resize_factor)
+        height = int(initial_height*general_resize_factor)
+        dim = (width, height)
+  
+        horizontally_resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+
+        return horizontally_resized
+
+
 
