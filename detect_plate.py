@@ -9,6 +9,7 @@ class detect_plate():
     def get_plate_image(self, image): # KÉP KIEMELŐ AI HASZNÁLATA, MÁS NE LEGYEN ITT
         try:
             result = self.model.predict(source=image, conf=0.5, verbose=False)
+            print(result)
             if len(result) == 0:
                 print("Error: Could not find licence plate on image")
                 return image # Eredeti kép visszaadása
@@ -60,6 +61,5 @@ class detect_plate():
         horizontally_resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
         return horizontally_resized
-
 
 

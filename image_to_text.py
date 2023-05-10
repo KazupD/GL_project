@@ -19,6 +19,20 @@ class image_to_text():
             return "Text not recognized"
         return self.format_text(text)
     
+    def get_chars(self, images):
+        chars = []
+        for image in images:
+            try: # A char egy tömb
+                char = pytesseract.image_to_string(image, lang='eng', config='--psm 10 --oem 1 -c tessedit_char_whitelist='+self.char_whitelist)
+            except Exception as e:
+                print("Error: Character recognition OCR not working")
+                print(e)
+                return "Text not recognized"
+            chars.append(char)
+        print("Recognized characters: ",chars)
+
+
+    
     def format_text(self, text): # SZÖVEG FORMÁZÁSA, REGEX, STB IDE JÖHET
         try:
             while(text[0].isupper() is False or text[0].isalpha() is False):  text = text[1:] # Zászló, EU jel, kis H betű leszedése
