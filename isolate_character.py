@@ -49,18 +49,21 @@ class isolate_character():
         # ha lehetséges, hagyjon egy kis helyet, hogy a betűk ne a kép széléig érjenek
         # állítólag ez javítja az OCR esélyeit
         try:
-            src = np.float32([[text_box_coordinates[0][0]-5,text_box_coordinates[0][1]-5], [text_box_coordinates[1][2]+5,text_box_coordinates[1][1]-5],
-                            [text_box_coordinates[0][0]-5,text_box_coordinates[0][3]+5], [text_box_coordinates[1][2]+5,text_box_coordinates[1][3]+5]])
+            src = np.float32([[text_box_coordinates[0][0]-10,text_box_coordinates[0][1]-10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][1]-10],
+                            [text_box_coordinates[0][0]-10,text_box_coordinates[0][3]+10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][3]+10]])
             dst = np.float32([[0, 0], [440, 0],
                             [0, 110], [440, 110]])
             matrix = cv2.getPerspectiveTransform(src, dst)
-            result = cv2.warpPerspective(image, matrix, (440, 110))
+            result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
         except:
-            src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
-                            [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
-            dst = np.float32([[0, 0], [440, 0],
-                            [0, 110], [440, 110]])
-            matrix = cv2.getPerspectiveTransform(src, dst)
-            result = cv2.warpPerspective(image, matrix, (440, 110))
-        cv2.imshow("Persp", result)
-        cv2.waitKey(0)
+            try:
+                src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
+                                [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
+                dst = np.float32([[0, 0], [440, 0],
+                                [0, 110], [440, 110]])
+                matrix = cv2.getPerspectiveTransform(src, dst)
+                result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
+            except:
+                result = image
+        # cv2.imshow("Persp", result)
+        # cv2.waitKey(0)

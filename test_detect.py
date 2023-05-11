@@ -26,10 +26,5 @@ def locate_plate(model, image):
     # Return bounding box coordinates of detected license plate as a numpy array
     plate_coordinates = result[0].boxes.xyxy[0].cpu().numpy().astype(int)
     extracted_plate = image[plate_coordinates[1]:plate_coordinates[3], plate_coordinates[0]:plate_coordinates[2]]
-    cv2.imshow("Plate", extracted_plate)
-    cv2.waitKey(0)
 
     return plate_coordinates
-
-# Hogy lásd, mi az output
-print(locate_plate(model, images[1]))

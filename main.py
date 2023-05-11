@@ -3,40 +3,43 @@ from image_to_text import image_to_text
 from detect_plate import detect_plate
 from isolate_character import isolate_character
 import cv2
+import os
 
 #def test_on_database(img_fetch, img_plate_detect, img_to_text, isolate_char):
 def test_on_database(img_fetch, img_to_text, isolate_char):
     start_index = 100
-    test_number = 1
+    test_number = 300
     success_numbers = 0
-    for i in range(start_index, start_index+test_number):
-        images = img_fetch.load_by_index(i)
+    for filename in os.listdir("input"):
+    #for i in range(start_index, start_index+test_number):
+        #images = img_fetch.load_by_index(i)
         #plate = img_plate_detect.get_plate_image(images[1])
-        plate = cv2.imread("output/2_True.jpg")
+        plate = cv2.imread(f"input/{filename}")
+        original_text = filename.split("_")[0]
         #cv2.imshow("plate", plate)
         #cv2.waitKey(0)
-        original_text = img_fetch.get_numberplate_by_index(i)
+        #original_text = img_fetch.get_numberplate_by_index(i)
         text_box_coordinates = isolate_char.get_corners_of_text(plate)
-        img_dot = cv2.circle(plate.copy(), (text_box_coordinates[0][0],text_box_coordinates[0][1]), radius=5, color=(0, 0, 255), thickness=-1)
-        img_dot = cv2.circle(img_dot, (text_box_coordinates[0][0],text_box_coordinates[0][3]), radius=5, color=(0, 0, 255), thickness=-1)
-        img_dot = cv2.circle(img_dot, (text_box_coordinates[1][2],text_box_coordinates[1][1]), radius=5, color=(0, 0, 255), thickness=-1)
-        img_dot = cv2.circle(img_dot, (text_box_coordinates[1][2],text_box_coordinates[1][3]), radius=5, color=(0, 0, 255), thickness=-1)
-        cv2.imshow("plate", img_dot)
-        cv2.waitKey(0)
+        # img_dot = cv2.circle(plate.copy(), (text_box_coordinates[0][0],text_box_coordinates[0][1]), radius=5, color=(0, 0, 255), thickness=-1)
+        # img_dot = cv2.circle(img_dot, (text_box_coordinates[0][0],text_box_coordinates[0][3]), radius=5, color=(0, 0, 255), thickness=-1)
+        # img_dot = cv2.circle(img_dot, (text_box_coordinates[1][2],text_box_coordinates[1][1]), radius=5, color=(0, 0, 255), thickness=-1)
+        # img_dot = cv2.circle(img_dot, (text_box_coordinates[1][2],text_box_coordinates[1][3]), radius=5, color=(0, 0, 255), thickness=-1)
+        # cv2.imshow("plate", img_dot)
+        # cv2.waitKey(0)
         isolate_char.do_perspective_transform(plate, text_box_coordinates)
-        #img_to_text.get_chars(character_images)
-        #detected_text = img_to_text.get_text(plate)
+        detected_text = img_to_text.get_text(plate)
+        print(original_text, "    ",detected_text)
         #cv2.imwrite('image_buffer/plate'+str(i)+'_'+detected_text+'.png', plate)
         
         #print(i)
-        #if(original_text == detected_text): success_numbers+=1
+        if(original_text == detected_text): success_numbers+=1
 
     print("Success rate : " + str((success_numbers/test_number)*100) + "%")
 
 
 def main():
     img_fetch = fetch_car()
-    #img_plate_detect = detect_plate()
+    img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
     isolate_char = isolate_character()
 
