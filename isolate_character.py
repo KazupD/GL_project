@@ -23,3 +23,21 @@ class isolate_character():
             return image # Eredeti kép visszaadása
 
         return extracted_char_imgs
+    
+    def get_corners_of_text(self, image): # Karakter kép kiemelése a rendszám képéről
+        try: 
+            results = self.model.predict(source=image, conf=0.5, verbose=False)
+        except Exception as e:
+            print("Error: Character locating AI not working")
+            print(e)
+            return image # Eredeti kép visszaadása
+        try:
+            sorted_char_coordinates = sorted(results[0].boxes.xyxy, key=lambda x: x.cpu().numpy().astype(int)[0])
+            first_char_coordinates = sorted_char_coordinates[0].cpu().numpy().astype(int)
+            last_char_coordinates = sorted_char_coordinates[-1].cpu().numpy().astype(int)
+        except Exception as e:
+            print("Error: Could not give text bounding box coordinates")
+            print(e)
+            return image # Eredeti kép visszaadása
+
+        return (first_char_coordinates, last_char_coordinates)
