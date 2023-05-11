@@ -1,4 +1,6 @@
 from ultralytics import YOLO
+import cv2
+import numpy as np
 
 class isolate_character():
     def __init__(self):
@@ -41,3 +43,24 @@ class isolate_character():
             return image # Eredeti kép visszaadása
 
         return (first_char_coordinates, last_char_coordinates)
+    
+
+    def do_perspective_transform(self, image, text_box_coordinates):
+        # ha lehetséges, hagyjon egy kis helyet, hogy a betűk ne a kép széléig érjenek
+        # állítólag ez javítja az OCR esélyeit
+        try:
+            src = np.float32([[text_box_coordinates[0][0]-5,text_box_coordinates[0][1]-5], [text_box_coordinates[1][2]+5,text_box_coordinates[1][1]-5],
+                            [text_box_coordinates[0][0]-5,text_box_coordinates[0][3]+5], [text_box_coordinates[1][2]+5,text_box_coordinates[1][3]+5]])
+            dst = np.float32([[0, 0], [440, 0],
+                            [0, 110], [440, 110]])
+            matrix = cv2.getPerspectiveTransform(src, dst)
+            result = cv2.warpPerspective(image, matrix, (440, 110))
+        except:
+            src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
+                            [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
+            dst = np.float32([[0, 0], [440, 0],
+                            [0, 110], [440, 110]])
+            matrix = cv2.getPerspectiveTransform(src, dst)
+            result = cv2.warpPerspective(image, matrix, (440, 110))
+        cv2.imshow("Persp", result)
+        cv2.waitKey(0)
