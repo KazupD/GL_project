@@ -5,7 +5,7 @@ import functools
 
 class detect_plate():
     def __init__(self):
-        self.model = YOLO('trained_90.pt')
+        self.model = YOLO('trained_400.pt')
 
     def get_plate_image(self, image): # KÉP KIEMELŐ AI HASZNÁLATA, MÁS NE LEGYEN ITT
         try:

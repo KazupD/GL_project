@@ -10,8 +10,8 @@ path = "output"
 if not os.path.exists(path): os.makedirs(path)
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 0
-    test_number = 1340
+    start_index = 500
+    test_number = 500
     success_numbers = 0
     start_time = time.time()
     for i in range(start_index, start_index+test_number):
@@ -25,7 +25,7 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
             print(detected_text)
             is_ok = bool(original_text == detected_text)
             if(is_ok): success_numbers+=1
-            #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
+            cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
             print("Success? -> " +  str(is_ok))
             print("-------------------------------")
 
@@ -73,7 +73,7 @@ def main():
     
 
     #test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-    test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
 
 if __name__ == "__main__":
