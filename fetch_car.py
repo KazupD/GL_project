@@ -31,7 +31,7 @@ class fetch_car():
                         print("Failed Request")
                         return None
                     
-            return images
+            return images # image list 3
 
     def load_by_index(self, index):
         with open('database/HF_train_database.csv', encoding="utf8") as db:
@@ -53,14 +53,14 @@ class fetch_car():
                         print("Failed Request")
                         return None
                     
-            return images
+            return images # image list 3
         
     def get_index_by_numberplate(self, numberplate):
         with open('database/HF_train_database.csv', encoding="utf8") as db:
             reader=csv.reader(db, delimiter=";")
 
             for r in enumerate(reader):
-                if(r[1][0] == numberplate): return r[0]
+                if(r[1][0] == numberplate): return r[0] # int
             
             return -1
 
@@ -69,14 +69,14 @@ class fetch_car():
             reader=csv.reader(db, delimiter=";")
 
             row = [r for idx, r in enumerate(reader) if idx == index]
-            return row[0][0]
+            return row[0][0] # string
         
 
     def load_image_by_url(self, url):
         try:
             req = self.opener.open(url)
             img = np.asarray(bytearray(req.read()), dtype=np.uint8)
-            return cv2.imdecode(img, -1)
+            return cv2.imdecode(img, -1) # image
         except Exception as e:
             print(e)
             print("Failed Request")

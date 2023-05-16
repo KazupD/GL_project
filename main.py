@@ -11,7 +11,7 @@ if not os.path.exists(path): os.makedirs(path)
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
     start_index = 0
-    test_number = 100
+    test_number = 1340
     success_numbers = 0
     start_time = time.time()
     for i in range(start_index, start_index+test_number):
@@ -72,8 +72,8 @@ def main():
     cv2.waitKey(0)'''
     
 
-    #test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-    test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    #test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
 
 if __name__ == "__main__":

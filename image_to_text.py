@@ -18,7 +18,7 @@ class image_to_text():
         if(text is None or len(text) < 6 or len(text) > 10):
             print("Error: Text recognition OCR working, but returns invalid string")
             return "Text not recognized"
-        return self.format_text(text)
+        return self.format_text(text) # string
     
     def format_text(self, text): # SZÖVEG FORMÁZÁSA, REGEX, STB IDE JÖHET
         try:
@@ -37,7 +37,7 @@ class image_to_text():
                 else:
                     formatted_text += temp_text_1[i]
             
-            return formatted_text
+            return formatted_text # string
         except Exception as e:
             print("Warning: Text formatting error, raw text returned")
             print(e)
@@ -49,7 +49,7 @@ class image_to_text():
         character = character.replace("7", "Z")
         character = character.replace("8", "B")
         character = character.replace("1", "I")
-        return character
+        return character # char
     
     def replace_alpha_with_num(self, character):
         character = character.replace("S", "5")
@@ -57,4 +57,4 @@ class image_to_text():
         character = character.replace("Z", "7")
         character = character.replace("B", "8")
         character = character.replace("I", "1")
-        return character
+        return character # char

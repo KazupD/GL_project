@@ -34,7 +34,7 @@ class detect_plate():
             print("Error: Extracted plate size is 0x0")
             return None
 
-        return self.process_image(extracted_plate)
+        return self.process_image(extracted_plate) # image
     
     def process_image(self, image): # KIEMELT KÉP FELDOLGOZÁSA IDE JÖHET
 
@@ -51,7 +51,7 @@ class detect_plate():
         #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 45, 15)
 
         
-        return blur
+        return blur # image
     
     def perscpective_correction(self, image, general_resize_factor):
         scale_percent = 520/110 # percent of original size
@@ -64,7 +64,7 @@ class detect_plate():
   
         horizontally_resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
 
-        return horizontally_resized
+        return horizontally_resized # image
     
 
 
