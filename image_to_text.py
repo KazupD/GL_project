@@ -3,7 +3,7 @@ import pytesseract
 class image_to_text():
 
     def __init__(self):
-        #pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+        pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
         self.char_whitelist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-'
 
     def get_text(self, image): # SZÖVEG FELISMERŐ OCR HASZNÁLATA, MÁS NE LEGYEN ITT

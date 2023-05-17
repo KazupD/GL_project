@@ -6,6 +6,7 @@ import functools
 class detect_plate():
     def __init__(self):
         self.model = YOLO('trained_90.pt')
+        self.model2 = YOLO('yolo_custom_char_250.pt')
 
     def get_plate_image(self, image): # KÉP KIEMELŐ AI HASZNÁLATA, MÁS NE LEGYEN ITT
         try:
@@ -40,18 +41,22 @@ class detect_plate():
 
         resized = self.perscpective_correction(image=image, general_resize_factor=1)
 
-        crop_img = resized[int(resized.shape[0]*0.08):int(resized.shape[0]*0.92), int(resized.shape[1]*0.16):int(resized.shape[1]*0.96)]
+        crop_img = resized[int(resized.shape[0]*0.08):int(resized.shape[0]*0.92), int(resized.shape[1]*0.16):int(resized.shape[1]*0.96)] 
 
         unisize = cv2.resize(crop_img, (440, 110), interpolation = cv2.INTER_AREA)
 
         gray_image = cv2.cvtColor(unisize, cv2.COLOR_BGR2GRAY)
 
-        blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
+        blur = cv2.GaussianBlur(gray_image, (3,3), cv2.BORDER_DEFAULT)
 
-        #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 45, 15)
-
+        thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 45, 15)
+        corners = self.get_corners_of_text(image=unisize)
+        if(corners is not None):
+            transformed_image = self.do_perspective_transform(image=blur, text_box_coordinates=corners)
         
-        return blur # image
+            return transformed_image # image
+        else:
+            return blur
     
     def perscpective_correction(self, image, general_resize_factor):
         scale_percent = 520/110 # percent of original size
@@ -66,6 +71,57 @@ class detect_plate():
 
         return horizontally_resized # image
     
+
+    def get_corners_of_text(self, image): # Karakter kép kiemelése a rendszám képéről
+        try: 
+            results = self.model2.predict(source=image, conf=0.5, verbose=False)
+        except Exception as e:
+            print("Error: Character locating AI not working")
+            print(e)
+            return None
+        try:
+            sorted_char_coordinates = sorted(results[0].boxes.xyxy, key=lambda x: x.cpu().numpy().astype(int)[0])
+            first_char_coordinates = sorted_char_coordinates[0].cpu().numpy().astype(int)
+            last_char_coordinates = sorted_char_coordinates[-1].cpu().numpy().astype(int)
+        except Exception as e:
+            print("Error: Could not give text bounding box coordinates")
+            print(e)
+            return None
+
+        return (first_char_coordinates, last_char_coordinates)
+    
+    def do_perspective_transform(self, image, text_box_coordinates):
+        # ha lehetséges, hagyjon egy kis helyet, hogy a betűk ne a kép széléig érjenek
+        # állítólag ez javítja az OCR esélyeit
+        '''try:
+            src = np.float32([[text_box_coordinates[0][0]-10,text_box_coordinates[0][1]-10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][1]-10],
+                            [text_box_coordinates[0][0]-10,text_box_coordinates[0][3]+10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][3]+10]])
+            dst = np.float32([[0, 0], [440, 0],
+                            [0, 110], [440, 110]])
+            matrix = cv2.getPerspectiveTransform(src, dst)
+            result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
+        except:
+            try:
+                src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
+                                [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
+                dst = np.float32([[0, 0], [440, 0],
+                                [0, 110], [440, 110]])
+                matrix = cv2.getPerspectiveTransform(src, dst)
+                result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
+            except:
+                result = image'''
+        if(text_box_coordinates is not None):
+            src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
+                                [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
+            dst = np.float32([[0, 0], [440, 0],
+                                [0, 110], [440, 110]])
+            matrix = cv2.getPerspectiveTransform(src, dst)
+            result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
+            cv2.imshow('image', result)
+            cv2.waitKey()
+            return result
+        else: return image
+
 
 
 
