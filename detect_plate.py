@@ -5,12 +5,12 @@ import functools
 
 class detect_plate():
     def __init__(self):
-        self.model = YOLO('trained_90.pt')
-        self.model2 = YOLO('yolo_custom_char_250.pt')
+        self.model_extract_plate = YOLO('trained_90.pt')
+        self.model_extract_char = YOLO('yolo_custom_char_250.pt')
 
     def get_plate_image(self, image): # KÉP KIEMELŐ AI HASZNÁLATA, MÁS NE LEGYEN ITT
         try:
-            result = self.model.predict(source=image, conf=0.5, verbose=False)
+            result = self.model_extract_plate.predict(source=image, conf=0.5, verbose=False)
             if len(result) == 0:
                 print("Error: Could not find licence plate on image")
                 return None
@@ -51,8 +51,6 @@ class detect_plate():
 
         #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 45, 15)
         ret3, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        #ret1, thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
-        #eroded = cv2.erode(thresh, np.ones((5, 5), np.uint8))
         corners = self.get_corners_of_text(image=unisize)
         if(corners is not None):
             transformed_image = self.do_perspective_transform(image=thresh, text_box_coordinates=corners)
@@ -65,6 +63,7 @@ class detect_plate():
         else:
             return gray_image
     
+
     def perscpective_correction(self, image, general_resize_factor):
         scale_percent = 520/110 # percent of original size
         initial_width = image.shape[1]
@@ -81,7 +80,7 @@ class detect_plate():
 
     def get_corners_of_text(self, image): # Karakter kép kiemelése a rendszám képéről
         try: 
-            results = self.model2.predict(source=image, conf=0.5, verbose=False)
+            results = self.model_extract_char.predict(source=image, conf=0.5, verbose=False)
         except Exception as e:
             print("Error: Character locating AI not working")
             print(e)
@@ -97,26 +96,8 @@ class detect_plate():
 
         return (first_char_coordinates, last_char_coordinates)
     
+    
     def do_perspective_transform(self, image, text_box_coordinates):
-        # ha lehetséges, hagyjon egy kis helyet, hogy a betűk ne a kép széléig érjenek
-        # állítólag ez javítja az OCR esélyeit
-        '''try:
-            src = np.float32([[text_box_coordinates[0][0]-10,text_box_coordinates[0][1]-10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][1]-10],
-                            [text_box_coordinates[0][0]-10,text_box_coordinates[0][3]+10], [text_box_coordinates[1][2]+10,text_box_coordinates[1][3]+10]])
-            dst = np.float32([[0, 0], [440, 0],
-                            [0, 110], [440, 110]])
-            matrix = cv2.getPerspectiveTransform(src, dst)
-            result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
-        except:
-            try:
-                src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
-                                [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
-                dst = np.float32([[0, 0], [440, 0],
-                                [0, 110], [440, 110]])
-                matrix = cv2.getPerspectiveTransform(src, dst)
-                result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
-            except:
-                result = image'''
         if(text_box_coordinates is not None):
             src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
                                 [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
@@ -139,7 +120,6 @@ class detect_plate():
             dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_CONSTANT, None, (255, 255, 255))
         elif(color == "black"):
             dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_CONSTANT, None, (0, 0, 0))
-
         return dst
 
 

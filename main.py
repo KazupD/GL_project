@@ -10,8 +10,8 @@ path = "output"
 if not os.path.exists(path): os.makedirs(path)
 
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 0
-    test_number = 1000
+    start_index = 500
+    test_number = 10
     success_numbers = 0
     start_time = time.time()
     for i in range(start_index, start_index+test_number):
@@ -63,13 +63,6 @@ def main():
     img_fetch = fetch_car()
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
-
-    '''images = img_fetch.load_by_numberplate("AYA-599")
-    cv2.imshow("Car", images[2])
-    plate = img_plate_detect.get_plate_image(images[1])
-    print(img_to_txt.get_text(plate))
-    cv2.imshow("Numberplate", plate)
-    cv2.waitKey(0)'''
     
 
     test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
