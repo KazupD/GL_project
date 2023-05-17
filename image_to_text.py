@@ -36,6 +36,8 @@ class image_to_text():
                     formatted_text += self.replace_num_with_alpha(temp_text_1[i])
                 else:
                     formatted_text += temp_text_1[i]
+
+            if(len(formatted_text) == 6): formatted_text = formatted_text[:3] + '-' + formatted_text[3:]
             
             return formatted_text # string
         except Exception as e:

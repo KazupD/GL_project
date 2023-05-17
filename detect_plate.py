@@ -41,25 +41,29 @@ class detect_plate():
 
         resized = self.perscpective_correction(image=image, general_resize_factor=1)
 
-        crop_img = resized[int(resized.shape[0]*0.04):int(resized.shape[0]*0.94), int(resized.shape[1]*0.16):int(resized.shape[1]*0.98)] 
+        crop_img = resized[int(resized.shape[0]*0.02):int(resized.shape[0]*0.98), int(resized.shape[1]*0.16):int(resized.shape[1]*0.98)] 
 
         unisize = cv2.resize(crop_img, (440, 110), interpolation = cv2.INTER_AREA)
 
         gray_image = cv2.cvtColor(unisize, cv2.COLOR_BGR2GRAY)
 
-        blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
+        #blur = cv2.GaussianBlur(gray_image, (5, 5), cv2.BORDER_DEFAULT)
 
         #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 45, 15)
-        ret3, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        ret3, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
         #ret1, thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
         #eroded = cv2.erode(thresh, np.ones((5, 5), np.uint8))
         corners = self.get_corners_of_text(image=unisize)
         if(corners is not None):
-            transformed_image = self.do_perspective_transform(image=blur, text_box_coordinates=corners)
-        
-            return transformed_image # image
+            transformed_image = self.do_perspective_transform(image=thresh, text_box_coordinates=corners)
+            extended = self.pad_image(transformed_image, 0.1, color="white")
+            dilated = cv2.dilate(extended, np.ones((3, 3), np.uint8))
+            opening = cv2.morphologyEx(dilated, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+            #cv2.imshow('image', opening)
+            #cv2.waitKey()
+            return opening # image
         else:
-            return blur
+            return gray_image
     
     def perscpective_correction(self, image, general_resize_factor):
         scale_percent = 520/110 # percent of original size
@@ -120,19 +124,21 @@ class detect_plate():
                                 [0, 110], [440, 110]])
             matrix = cv2.getPerspectiveTransform(src, dst)
             result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
-            cv2.imshow('image', result)
-            cv2.waitKey()
             return result
         else: return image
 
 
-    def pad_image(src, padding):
+    def pad_image(self, src, padding, color=None):
         top = int(padding * src.shape[0])  # shape[0] = rows
         bottom = top
         left = int(padding * src.shape[1])  # shape[1] = cols
         right = left
-        
-        dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_REPLICATE)
+        if(color == None):
+            dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_REPLICATE)
+        elif(color == "white"):
+            dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_CONSTANT, None, (255, 255, 255))
+        elif(color == "black"):
+            dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_CONSTANT, None, (0, 0, 0))
 
         return dst
 
