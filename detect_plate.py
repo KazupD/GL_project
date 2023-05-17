@@ -41,15 +41,18 @@ class detect_plate():
 
         resized = self.perscpective_correction(image=image, general_resize_factor=1)
 
-        crop_img = resized[int(resized.shape[0]*0.08):int(resized.shape[0]*0.92), int(resized.shape[1]*0.16):int(resized.shape[1]*0.96)] 
+        crop_img = resized[int(resized.shape[0]*0.04):int(resized.shape[0]*0.94), int(resized.shape[1]*0.16):int(resized.shape[1]*0.98)] 
 
         unisize = cv2.resize(crop_img, (440, 110), interpolation = cv2.INTER_AREA)
 
         gray_image = cv2.cvtColor(unisize, cv2.COLOR_BGR2GRAY)
 
-        blur = cv2.GaussianBlur(gray_image, (3,3), cv2.BORDER_DEFAULT)
+        blur = cv2.GaussianBlur(gray_image, (9,9), cv2.BORDER_DEFAULT)
 
-        thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 45, 15)
+        #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 45, 15)
+        ret3, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+        #ret1, thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
+        #eroded = cv2.erode(thresh, np.ones((5, 5), np.uint8))
         corners = self.get_corners_of_text(image=unisize)
         if(corners is not None):
             transformed_image = self.do_perspective_transform(image=blur, text_box_coordinates=corners)
