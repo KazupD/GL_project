@@ -32,7 +32,7 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
     # Iterate on the database file
     for i in range(start_index, start_index+test_number):
         # Load the picture from the database by the line index
-        images = img_fetch.load_by_index(i, benchmark_CSVdatabase_path)
+        images = img_fetch.load_by_index(i)
         if(images is not None): # If the HTTP connection works correctly
             # Get and evaluate the image
             plate = img_plate_detect.get_plate_image(images[1])
@@ -63,11 +63,11 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
 # The result of the evaluated image will be written to a CSV file
 # This function can be used to detect and evaluate numberplates in the images
 def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
-    global CSVdatabase_path
+    print(CSVdatabase_path)
     file_to_complete_data = []
     with open(CSVdatabase_path, encoding="utf8") as db:
         # Read files
-        file=csv.reader(db, delimiter=";")
+        file=csv.reader(db, delimiter=delimiter)
         rowindex = 0
         for row in file:
             numberplate_value = '' # Initialize variable
@@ -80,26 +80,35 @@ def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
             rowindex+=1
         
     with open('database/CirmosCicak.csv', 'w', encoding="utf8", newline ='') as db:  
-        write = csv.writer(db, delimiter=";")
+        write = csv.writer(db, delimiter=delimiter)
         write.writerows(file_to_complete_data)
 
 
 def main():
-    # Object 
+    # Create object 
     img_fetch = fetch_car()
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
 
-    '''images = img_fetch.load_by_numberplate("AYA-599")
-    cv2.imshow("Car", images[2])
-    plate = img_plate_detect.get_plate_image(images[1])
-    print(img_to_txt.get_text(plate))
-    cv2.imshow("Numberplate", plate)
-    cv2.waitKey(0)'''
-    
-
-    test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-    #test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    #Mode selector - Choose the way you want to use the app
+    # Mode 0: - evaluate images (real-life application)
+    # Mode 1: - evaluate only one image (Debug application)
+    # Mode 2: - evaluate the test database (benchmark application)
+    mode = 2
+    if (mode == 0):
+        img_fetch.set_dbpath(CSVdatabase_path) # Set the path to database
+        test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    elif (mode == 1):
+        img_fetch.set_dbpath(benchmark_CSVdatabase_path)
+        images = img_fetch.load_by_numberplate("AYA-599")
+        cv2.imshow("Car", images[2])
+        plate = img_plate_detect.get_plate_image(images[1])
+        print(img_to_txt.get_text(plate))
+        cv2.imshow("Numberplate", plate)
+        cv2.waitKey(0)
+    elif (mode == 2):
+        img_fetch.set_dbpath(benchmark_CSVdatabase_path)
+        test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
 
 if __name__ == "__main__":

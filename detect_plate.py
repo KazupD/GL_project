@@ -2,7 +2,6 @@
 import cv2
 from ultralytics import YOLO
 import numpy as np
-import functools
 
 class detect_plate():
     def __init__(self):
@@ -67,14 +66,12 @@ class detect_plate():
 
     def perscpective_correction(self, image, general_resize_factor):
         scale_percent = 520/110 # percent of original size
-        initial_width = image.shape[1]
         initial_height = image.shape[0]
 
         width = int((initial_height * scale_percent)*general_resize_factor)
         height = int(initial_height*general_resize_factor)
-        dim = (width, height)
   
-        horizontally_resized = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+        horizontally_resized = cv2.resize(image, (width, height), interpolation = cv2.INTER_AREA)
 
         return horizontally_resized # image
     
@@ -99,21 +96,20 @@ class detect_plate():
     
     
     def do_perspective_transform(self, image, text_box_coordinates):
-        if(text_box_coordinates is not None):
-            src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
+        src = np.float32([[text_box_coordinates[0][0],text_box_coordinates[0][1]], [text_box_coordinates[1][2],text_box_coordinates[1][1]],
                                 [text_box_coordinates[0][0],text_box_coordinates[0][3]], [text_box_coordinates[1][2],text_box_coordinates[1][3]]])
-            dst = np.float32([[0, 0], [440, 0],
-                                [0, 110], [440, 110]])
-            matrix = cv2.getPerspectiveTransform(src, dst)
-            result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
-            return result
-        else: return image
+        dst = np.float32([[0, 0], [440, 0],
+                          [0, 110], [440, 110]])
+        matrix = cv2.getPerspectiveTransform(src, dst)
+        result = cv2.warpPerspective(image, matrix, (440, 110), borderMode=cv2.BORDER_CONSTANT, borderValue = [230, 230, 230])
+        return result
+        
 
-
+    # It adds padding to improve OCRs working
     def pad_image(self, src, padding, color=None):
-        top = int(padding * src.shape[0])  # shape[0] = rows
+        top = int(padding * src.shape[0])
         bottom = top
-        left = int(padding * src.shape[1])  # shape[1] = cols
+        left = int(padding * src.shape[1])
         right = left
         if(color == None):
             dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_REPLICATE)
