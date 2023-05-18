@@ -7,7 +7,7 @@ import os
 import csv
 import time
 
-#### Program paramatres
+#### Program paramaters
 debug_output_path = "output" # Image output folder
 if not os.path.exists(debug_output_path): os.makedirs(debug_output_path) # Create path if not exist
 delimiter = ";" # CSV Database delimiter caracter
@@ -20,7 +20,6 @@ CSVdatabase_path = 'database/HF_final_database_beta.csv' # Images what you want 
 # The result of the evaluated image will be printed to the console
 # This function can be used to benchmark our code
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    global benchmark_CSVdatabase_path
     # Testing database parameters
     start_index = 500 # This is the index of the first evaluated row
     test_number = 10 # This number of images will be evaluated
@@ -31,24 +30,20 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
 
     # Iterate on the database file
     for i in range(start_index, start_index+test_number):
-        # Load the picture from the database by the line index
-        images = img_fetch.load_by_index(i)
-        if(images is not None): # If the HTTP connection works correctly
-            # Get and evaluate the image
-            plate = img_plate_detect.get_plate_image(images[1])
-            original_text = img_fetch.get_numberplate_by_index(i)
-            detected_text = img_to_text.get_text(plate)
+        images = img_fetch.load_by_index(i) # Load the picture from the internet by the databae line index
+        if(images is  None): continue # If the HTTP connection does not work correctly
 
-            # Display the current detection status
-            # Display the image number, original text and the detected test to the console
-            print("Image number:" + str(i))
-            print(original_text)
-            print(detected_text)
-            is_ok = bool(original_text == detected_text)
-            if(is_ok): success_numbers+=1
-            #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
-            print("Success? -> " +  str(is_ok))
-            print("-------------------------------")
+        plate = img_plate_detect.get_plate_image(images[1]) # Get and evaluate the image
+        original_text = img_fetch.get_numberplate_by_index(i)
+        detected_text = img_to_text.get_text(plate)
+
+        # Display the current detection status
+        # Display the image number, original text and the detected test to the console
+        is_ok = bool(original_text == detected_text)
+        if(is_ok): success_numbers+=1
+        print("Image number:" + str(i) + "\r\nOriginal:   " + original_text + "\r\nRecognized: " + detected_text + "\r\nSuccess? ->" +  str(is_ok) + "\r\n" + "-" * 10)
+        #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
+            
 
     # Display the statistical datas
     print("Tested on : " +  str(test_number) + " images")
