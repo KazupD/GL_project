@@ -1,3 +1,4 @@
+# Import libraries
 from fetch_car import fetch_car
 from image_to_text import image_to_text
 from detect_plate import detect_plate
@@ -6,20 +7,40 @@ import os
 import csv
 import time
 
-path = "output"
-if not os.path.exists(path): os.makedirs(path)
+#### Program paramatres
+debug_output_path = "output" # Image output folder
+if not os.path.exists(debug_output_path): os.makedirs(debug_output_path) # Create path if not exist
+delimiter = ";" # CSV Database delimiter caracter
+# We defined two different type of database
+# The benchmark version contains tagged images, and the other contains only images
+benchmark_CSVdatabase_path = "database/HF_train_database.csv" # Labelled images
+CSVdatabase_path = 'database/HF_final_database_beta.csv' # Images what you want to evaluate
 
+# This function can read and evaluate the test database
+# The result of the evaluated image will be printed to the console
+# This function can be used to benchmark our code
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    start_index = 0
-    test_number = 1340
-    success_numbers = 0
-    start_time = time.time()
+    global benchmark_CSVdatabase_path
+    # Testing database parameters
+    start_index = 0 # This is the index of the first evaluated row
+    test_number = 1340 # This number of images will be evaluated
+    # Statistic variables
+    success_numbers = 0 # How many puctures were corretly evaluated?
+    start_time = time.time() # Start a timer (get the current time)
+    not_evaluation_errors = 0 # The number of errors during database processing
+
+    # Iterate on the database file
     for i in range(start_index, start_index+test_number):
-        images = img_fetch.load_by_index(i)
-        if(images is not None): # Ha nincs HTTP error
+        # Load the picture from the database by the line index
+        images = img_fetch.load_by_index(i, benchmark_CSVdatabase_path)
+        if(images is not None): # If the HTTP connection works correctly
+            # Get and evaluate the image
             plate = img_plate_detect.get_plate_image(images[1])
             original_text = img_fetch.get_numberplate_by_index(i)
             detected_text = img_to_text.get_text(plate)
+
+            # Display the current detection status
+            # Display the image number, original text and the detected test to the console
             print("Image number:" + str(i))
             print(original_text)
             print(detected_text)
@@ -29,7 +50,7 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
             print("Success? -> " +  str(is_ok))
             print("-------------------------------")
 
-
+    # Display the statistical datas
     print("Tested on : " +  str(test_number) + " images")
     print("Success rate : " + str((success_numbers/test_number)*100) + "%")
     finish_time = time.time()
@@ -39,18 +60,22 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
     print("Average time: " + str(average_time) + " s")
 
 
+# The result of the evaluated image will be written to a CSV file
+# This function can be used to detect and evaluate numberplates in the images
 def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
+    global CSVdatabase_path
     file_to_complete_data = []
-    with open('database/HF_final_database_beta.csv', encoding="utf8") as db:
+    with open(CSVdatabase_path, encoding="utf8") as db:
+        # Read files
         file=csv.reader(db, delimiter=";")
         rowindex = 0
         for row in file:
-            numberplate_value = ''
-            image = img_fetch.load_image_by_url(row[1])
-            if(image is not None):
+            numberplate_value = '' # Initialize variable
+            image = img_fetch.load_image_by_url(row[1]) # GET the image by url
+            if(image is not None): # Evaluate image if there is no db error
                 plate = img_plate_detect.get_plate_image(image)
                 numberplate_value = img_to_text.get_text(plate)
-            file_to_complete_data.append([numberplate_value, row[1], row[2]])
+            file_to_complete_data.append([numberplate_value, row[1], row[2]]) # Add a row to a
             print(rowindex)
             rowindex+=1
         
@@ -60,9 +85,12 @@ def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
 
 
 def main():
+    # Object 
     img_fetch = fetch_car()
     img_plate_detect = detect_plate()
     img_to_txt = image_to_text()
+
+    method = 0
 
     '''images = img_fetch.load_by_numberplate("AYA-599")
     cv2.imshow("Car", images[2])

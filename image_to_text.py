@@ -1,13 +1,16 @@
+# Import libraries
 import pytesseract
 
+# We are using Tesseract OCR to detect a text in the the image
 class image_to_text():
 
     def __init__(self):
+        # Uncomment this if your Tesseract OCR is not added to environment variables
         #pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
-        self.char_whitelist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-'
+        self.char_whitelist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-' # Whitelist It will be filtered for these caracters
 
-    def get_text(self, image): # SZÖVEG FELISMERŐ OCR HASZNÁLATA, MÁS NE LEGYEN ITT
-        if(image is None): return "Text not recognized"
+    def get_text(self, image): # Using a text detecting OCR
+        if(image is None): return "Text not recognized" #
         try:
             #text = pytesseract.image_to_string(image, config ='--psm 6')
             text = pytesseract.image_to_string(image, lang='eng', config='--psm 10 --oem 3 -c tessedit_char_whitelist='+self.char_whitelist)

@@ -1,7 +1,10 @@
+# Import libraries
 import csv
 import numpy as np
 import urllib.request
 import cv2
+
+
 
 class AppURLopener(urllib.request.FancyURLopener):
     version = "Mozilla/5.0"
@@ -11,8 +14,8 @@ class fetch_car():
     def __init__(self):
         self.opener = AppURLopener()
 
-    def load_by_numberplate(self, numberplate):
-        with open('database/HF_train_database.csv', encoding="utf8") as db:
+    def load_by_numberplate(self, numberplate, db_path):
+        with open(db_path, encoding="utf8") as db:
             reader=csv.reader(db, delimiter=";")
 
             row = [r for idx, r in enumerate(reader) if r[0] == numberplate]
@@ -33,8 +36,10 @@ class fetch_car():
                     
             return images # image list 3
 
-    def load_by_index(self, index):
-        with open('database/HF_train_database.csv', encoding="utf8") as db:
+
+    # Read a csv file and return 
+    def load_by_index(self, index, db_path):
+        with open(db_path, encoding="utf8") as db:
             reader=csv.reader(db, delimiter=";")
 
             row = [r for idx, r in enumerate(reader) if idx == index]
