@@ -67,6 +67,14 @@ class detect_plate():
 
         return horizontally_resized # image
     
+    def pad_image(src, padding):
+        top = int(padding * src.shape[0])  # shape[0] = rows
+        bottom = top
+        left = int(padding * src.shape[1])  # shape[1] = cols
+        right = left
+        
+        dst = cv2.copyMakeBorder(src, top, bottom, left, right, cv2.BORDER_REPLICATE)
 
+        return dst
 
 
