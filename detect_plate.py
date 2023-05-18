@@ -51,9 +51,9 @@ class detect_plate():
 
         #thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 45, 15)
         ret3, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-        corners = self.get_corners_of_text(image=unisize)
-        if(corners is not None):
-            transformed_image = self.do_perspective_transform(image=thresh, text_box_coordinates=corners)
+        first_char_coordinates, last_char_coordinates, number_of_characters = self.get_corners_of_text(image=unisize)
+        if(first_char_coordinates is not None and number_of_characters > 4):
+            transformed_image = self.do_perspective_transform(image=thresh, text_box_coordinates=(first_char_coordinates, last_char_coordinates))
             extended = self.pad_image(transformed_image, 0.1, color="white")
             dilated = cv2.dilate(extended, np.ones((3, 3), np.uint8))
             opening = cv2.morphologyEx(dilated, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
@@ -82,17 +82,18 @@ class detect_plate():
         except Exception as e:
             print("Error: Character locating AI not working")
             print(e)
-            return None
+            return None, None, None
         try:
             sorted_char_coordinates = sorted(results[0].boxes.xyxy, key=lambda x: x.cpu().numpy().astype(int)[0])
+            number_of_characters = len(sorted_char_coordinates)
             first_char_coordinates = sorted_char_coordinates[0].cpu().numpy().astype(int)
             last_char_coordinates = sorted_char_coordinates[-1].cpu().numpy().astype(int)
         except Exception as e:
             print("Error: Could not give text bounding box coordinates")
             print(e)
-            return None
+            return None, None, None
 
-        return (first_char_coordinates, last_char_coordinates)
+        return first_char_coordinates, last_char_coordinates, number_of_characters
     
     
     def do_perspective_transform(self, image, text_box_coordinates):

@@ -34,7 +34,7 @@ class fetch_car():
                         img = np.asarray(bytearray(req.read()), dtype=np.uint8)
                         images.append(cv2.imdecode(img, -1)) # It adds the image to the image list
                     except Exception as e:
-                        print("Failed Request:" + e)
+                        print(e)
                         return None
                     
             return images # image list 3
@@ -53,7 +53,7 @@ class fetch_car():
                         img = np.asarray(bytearray(req.read()), dtype=np.uint8)
                         images.append(cv2.imdecode(img, -1))
                     except Exception as e:
-                        print("Failed Request:" + e)
+                        print(e)
                         return None
                     
             return images # image list 3
@@ -81,5 +81,5 @@ class fetch_car():
             img = np.asarray(bytearray(req.read()), dtype=np.uint8)
             return cv2.imdecode(img, -1) # image
         except Exception as e:
-            print("Failed Request:" + e)
+            print(e)
             return None

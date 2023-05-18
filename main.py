@@ -21,8 +21,8 @@ CSVdatabase_path = 'database/HF_final_database_beta.csv' # Images what you want 
 # This function can be used to benchmark our code
 def test_on_database(img_fetch, img_plate_detect, img_to_text):
     # Testing database parameters
-    start_index = 500 # This is the index of the first evaluated row
-    test_number = 10 # This number of images will be evaluated
+    start_index = 1 # This is the index of the first evaluated row
+    test_number = 1340 # This number of images will be evaluated
     # Statistic variables
     success_numbers = 0 # How many puctures were corretly evaluated?
     start_time = time.time() # Start a timer (get the current time)
@@ -43,7 +43,6 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
         if(is_ok): success_numbers+=1
         print("Image number:" + str(i) + "\r\nOriginal:   " + original_text + "\r\nRecognized: " + detected_text + "\r\nSuccess? ->" +  str(is_ok) + "\r\n" + "-" * 10)
         #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
-            
 
     # Display the statistical datas
     print("Tested on : " +  str(test_number) + " images")
