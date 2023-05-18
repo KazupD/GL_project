@@ -1,3 +1,4 @@
+# Import libraries
 from fetch_car import fetch_car
 from image_to_text import image_to_text
 from detect_plate import detect_plate
