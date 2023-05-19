@@ -19,14 +19,10 @@ CSVdatabase_path = 'database/HF_final_database_beta.csv' # Images what you want 
 # This function can read and evaluate the test database
 # The result of the evaluated image will be printed to the console
 # This function can be used to benchmark our code
-def test_on_database(img_fetch, img_plate_detect, img_to_text):
-    # Testing database parameters
-    start_index = 1 # This is the index of the first evaluated row
-    test_number = 1340 # This number of images will be evaluated
+def test_on_database(img_fetch, img_plate_detect, img_to_text, start_index = 0, test_number = 100, log = False):
     # Statistic variables
     success_numbers = 0 # How many puctures were corretly evaluated?
     start_time = time.time() # Start a timer (get the current time)
-    not_evaluation_errors = 0 # The number of errors during database processing
 
     # Iterate on the database file
     for i in range(start_index, start_index+test_number):
@@ -42,6 +38,20 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text):
         is_ok = bool(original_text == detected_text)
         if(is_ok): success_numbers+=1
         print("Image number:" + str(i) + "\r\nOriginal:   " + original_text + "\r\nRecognized: " + detected_text + "\r\nSuccess? ->" +  str(is_ok) + "\r\n" + "-" * 10)
+        if log:
+            try:
+                with open(f'{debug_output_path}/log.csv', 'a', newline='') as f_object:
+                    writer_object = csv.writer(f_object)
+                    row = [i, original_text, detected_text, str(is_ok)]
+                    writer_object.writerow(row)
+                    f_object.close()
+                if is_ok is False:
+                    fail_images_path = f"{debug_output_path}/fail"
+                    if not os.path.exists(fail_images_path): os.makedirs(fail_images_path) # Create path if not exist
+                    cv2.imwrite(f'{fail_images_path}/i{i}_{detected_text}.jpg', plate)
+            except:
+                print("Log error")    
+
         #cv2.imwrite(path +"/"+ str(i) + "_"+ str(is_ok) + ".jpg", plate)
 
     # Display the statistical datas
@@ -85,14 +95,14 @@ def main():
     img_to_txt = image_to_text()
 
     #Mode selector - Choose the way you want to use the app
-    # Mode 0: - evaluate images (real-life application)
-    # Mode 1: - evaluate only one image (Debug application)
-    # Mode 2: - evaluate the test database (benchmark application)
-    mode = 1
-    if (mode == 0):
+    # Mode 'R': - evaluate images (real-life application)
+    # Mode 'D': - evaluate only one image (Debug application)
+    # Mode 'B': - evaluate the test database (benchmark application)
+    mode = 'B'
+    if (mode == 'R'):
         img_fetch.set_dbpath(CSVdatabase_path) # Set the path to database
         test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-    elif (mode == 1):
+    elif (mode == 'D'):
         img_fetch.set_dbpath(benchmark_CSVdatabase_path)
         images = img_fetch.load_by_numberplate("AYA-599")
         cv2.imshow("Car", images[2])
@@ -100,10 +110,11 @@ def main():
         print(img_to_txt.get_text(plate))
         cv2.imshow("Numberplate", plate)
         cv2.waitKey(0)
-    elif (mode == 2):
+    elif (mode == 'B'):
         img_fetch.set_dbpath(benchmark_CSVdatabase_path)
-        test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-
+        test_on_database(start_index = 0, test_number = 400, log = True, img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+    else:
+        print("Invalid mode")
 
 if __name__ == "__main__":
     main()
