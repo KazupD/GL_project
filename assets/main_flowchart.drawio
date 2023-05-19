@@ -1,0 +1,96 @@
+<mxfile host="app.diagrams.net" modified="2023-05-19T20:23:14.608Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42" etag="9rSeCUrJAE7nSbT2hGqW" version="21.3.2" type="device">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="905" dy="499" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-0" value="" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="351" y="175" width="119" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-1" value="" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=classic;endFill=0;endSize=8;strokeWidth=2;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;shape=flexArrow;strokeColor=#788AA3;fontColor=default;startSize=8;fillColor=none;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="DRILjm_fNbtcjqF4PDqQ-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;main.py&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=1;labelBackgroundColor=none;fillColor=#B2C9AB;strokeColor=#788AA3;fontColor=#46495D;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="160" y="80" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;- kép lekérése&lt;br&gt;&lt;i&gt;(HTTP request)&lt;/i&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#B2C9AB;strokeColor=#788AA3;fontColor=#46495D;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="160" y="170" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-4" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;- rendszám lokalizálása &lt;i&gt;YOLO modullal&lt;/i&gt;&lt;br&gt;- kép kivágása&lt;br&gt;- kiemelt kép preprocesszálása&lt;/font&gt;" style="whiteSpace=wrap;html=1;rounded=1;labelBackgroundColor=none;fillColor=#B2C9AB;strokeColor=#788AA3;fontColor=#46495D;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="160" y="280" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-5" value="" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=classic;endFill=0;endSize=8;strokeWidth=2;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;shape=flexArrow;strokeColor=#788AA3;fontColor=default;startSize=8;fillColor=none;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="239.5" y="230" as="sourcePoint" />
+            <mxPoint x="239.5" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-6" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;- szöveg felismerése&lt;br&gt;&amp;nbsp;&lt;i&gt;Tesseract modullal&lt;/i&gt;&lt;br&gt;- szöveg korrekciója&lt;br&gt;- REGEX&lt;/font&gt;" style="whiteSpace=wrap;html=1;rounded=1;labelBackgroundColor=none;fillColor=#B2C9AB;strokeColor=#788AA3;fontColor=#46495D;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="160" y="420" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-7" value="" style="rounded=0;html=1;jettySize=auto;orthogonalLoop=1;fontSize=11;endArrow=classic;endFill=0;endSize=8;strokeWidth=2;shadow=0;labelBackgroundColor=none;edgeStyle=orthogonalEdgeStyle;shape=flexArrow;strokeColor=#788AA3;fontColor=default;startSize=8;fillColor=none;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="239.5" y="370" as="sourcePoint" />
+            <mxPoint x="239.5" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-8" value="" style="group" vertex="1" connectable="0" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="160" y="30" width="80" height="510" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-9" value="" style="edgeStyle=elbowEdgeStyle;endArrow=classic;html=1;rounded=0;endSize=8;startSize=8;shape=link;shadow=0;fillColor=none;elbow=vertical;strokeWidth=2;labelBackgroundColor=none;strokeColor=#788AA3;fontColor=default;width=10;" edge="1" parent="DRILjm_fNbtcjqF4PDqQ-8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="480" as="sourcePoint" />
+            <mxPoint x="-35.55555555555556" y="30" as="targetPoint" />
+            <Array as="points">
+              <mxPoint y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-10" value="" style="group" vertex="1" connectable="0" parent="DRILjm_fNbtcjqF4PDqQ-8">
+          <mxGeometry x="26.666666666666664" width="53.33333333333333" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-11" value="" style="edgeStyle=elbowEdgeStyle;endArrow=classic;html=1;rounded=0;endSize=8;startSize=8;shape=link;shadow=0;fillColor=none;elbow=vertical;strokeWidth=2;labelBackgroundColor=none;strokeColor=#788AA3;fontColor=default;width=10;" edge="1" parent="DRILjm_fNbtcjqF4PDqQ-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="53.33333333333333" y="20" as="sourcePoint" />
+            <mxPoint x="-62.22222222222222" y="30" as="targetPoint" />
+            <Array as="points">
+              <mxPoint />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-12" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;strokeColor=#788AA3;fontColor=default;fillColor=none;labelBackgroundColor=none;endSize=8;startSize=8;shadow=0;strokeWidth=2;" edge="1" parent="DRILjm_fNbtcjqF4PDqQ-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="53.33333333333333" y="20" as="sourcePoint" />
+            <mxPoint x="52.888888888888886" y="50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-13" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;fetch_car.py&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#46495D;fontStyle=1" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="391" y="187.5" width="45" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-14" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;size=0.5;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="331" y="280" width="20" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-15" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="331" y="170" width="16" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-16" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;flipH=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;size=0.5;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="331" y="420" width="20" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-17" value="" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="351" y="300" width="119" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-18" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;detect_plate.py&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#46495D;fontStyle=1" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="388" y="312.5" width="45" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-19" value="" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#788AA3;fontColor=#46495D;fillColor=#B2C9AB;shadow=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="350" y="440" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="DRILjm_fNbtcjqF4PDqQ-20" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;image_to_text&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#46495D;fontStyle=1" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="387.5" y="452.5" width="45" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
