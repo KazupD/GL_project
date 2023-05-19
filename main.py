@@ -88,7 +88,7 @@ def main():
     # Mode 0: - evaluate images (real-life application)
     # Mode 1: - evaluate only one image (Debug application)
     # Mode 2: - evaluate the test database (benchmark application)
-    mode = 2
+    mode = 1
     if (mode == 0):
         img_fetch.set_dbpath(CSVdatabase_path) # Set the path to database
         test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
