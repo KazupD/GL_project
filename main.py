@@ -8,13 +8,7 @@ import csv
 import time
 
 #### Program paramaters
-debug_output_path = "output" # Image output folder
-if not os.path.exists(debug_output_path): os.makedirs(debug_output_path) # Create path if not exist
 delimiter = ";" # CSV Database delimiter caracter
-# We defined two different type of database
-# The benchmark version contains tagged images, and the other contains only images
-benchmark_CSVdatabase_path = "database/HF_train_database.csv" # Labelled images
-CSVdatabase_path = 'database/HF_final_database_beta.csv' # Images what you want to evaluate
 
 # This function can read and evaluate the test database
 # The result of the evaluated image will be printed to the console
@@ -66,10 +60,9 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text, start_index = 0, 
 
 # The result of the evaluated image will be written to a CSV file
 # This function can be used to detect and evaluate numberplates in the images
-def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
-    print(CSVdatabase_path)
+def test_on_final_database(img_fetch, img_plate_detect, img_to_text, database):
     file_to_complete_data = []
-    with open(CSVdatabase_path, encoding="utf8") as db:
+    with open(database, encoding="utf8") as db:
         # Read files
         file=csv.reader(db, delimiter=delimiter)
         rowindex = 0
@@ -87,32 +80,46 @@ def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
         write = csv.writer(db, delimiter=delimiter)
         write.writerows(file_to_complete_data)
 
+def test_debug(img_fetch, img_plate_detect, img_to_text, numberplate):
+    images = img_fetch.load_by_numberplate(numberplate)
+    cv2.imshow("Car", images[2])
+    plate = img_plate_detect.get_plate_image(images[1])
+    print(img_to_text.get_text(plate))
+    cv2.imshow("Numberplate", plate)
+    cv2.waitKey(0)
+
+
 
 def main():
     # Create object 
-    img_fetch = fetch_car()
-    img_plate_detect = detect_plate()
-    img_to_txt = image_to_text()
+    img_f = fetch_car()
+    img_pd = detect_plate()
+    img2txt = image_to_text()
+
+    debug_output_path = "output" # Image output folder
+    if not os.path.exists(debug_output_path): os.makedirs(debug_output_path) # Create path if not exist
+
+
+    # We defined two different type of database
+    # The benchmark version contains tagged images, and the other contains only images
+    CSV_db_train = "database/HF_train_database.csv" # Labelled images
+    CSV_db_app = 'database/HF_final_database_beta.csv' # Images what you want to evaluate
 
     #Mode selector - Choose the way you want to use the app
     # Mode 'R': - evaluate images (real-life application)
     # Mode 'D': - evaluate only one image (Debug application)
     # Mode 'B': - evaluate the test database (benchmark application)
-    mode = 'B'
+    mode = 'D'
+
     if (mode == 'R'):
-        img_fetch.set_dbpath(CSVdatabase_path) # Set the path to database
-        test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+        img_f.set_dbpath(CSV_db_app) # Set the path to database
+        test_on_final_database(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, database = CSV_db_app)
     elif (mode == 'D'):
-        img_fetch.set_dbpath(benchmark_CSVdatabase_path)
-        images = img_fetch.load_by_numberplate("AYA-599")
-        cv2.imshow("Car", images[2])
-        plate = img_plate_detect.get_plate_image(images[1])
-        print(img_to_txt.get_text(plate))
-        cv2.imshow("Numberplate", plate)
-        cv2.waitKey(0)
+        img_f.set_dbpath(CSV_db_train)
+        test_debug(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, numberplate="AYA-599")
     elif (mode == 'B'):
-        img_fetch.set_dbpath(benchmark_CSVdatabase_path)
-        test_on_database(start_index = 0, test_number = 400, log = True, img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
+        img_f.set_dbpath(CSV_db_train)
+        test_on_database(start_index = 0, test_number = 400, log = True, img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt)
     else:
         print("Invalid mode")
 
