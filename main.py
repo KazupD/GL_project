@@ -13,7 +13,7 @@ delimiter = ";" # CSV Database delimiter caracter
 # This function can read and evaluate the test database
 # The result of the evaluated image will be printed to the console
 # This function can be used to benchmark our code
-def test_on_database(img_fetch, img_plate_detect, img_to_text, start_index = 0, test_number = 100, log = False):
+def test_on_database(img_fetch, img_plate_detect, img_to_text, start_index = 0, test_number = 100, log = False, debug_output_path = "debug.csv"):
     # Statistic variables
     success_numbers = 0 # How many puctures were corretly evaluated?
     start_time = time.time() # Start a timer (get the current time)
@@ -60,25 +60,38 @@ def test_on_database(img_fetch, img_plate_detect, img_to_text, start_index = 0, 
 
 # The result of the evaluated image will be written to a CSV file
 # This function can be used to detect and evaluate numberplates in the images
-def test_on_final_database(img_fetch, img_plate_detect, img_to_text, database):
+def test_on_final_database(img_fetch, img_plate_detect, img_to_text, database, database_out):
     file_to_complete_data = []
     with open(database, encoding="utf8") as db:
         # Read files
         file=csv.reader(db, delimiter=delimiter)
         rowindex = 0
+        if(os.path.isfile(database_out)):
+            if(os.stat("database/CirmosCicak.csv").st_size > 0):
+                with open(database_out, 'a', newline='') as f_object:
+                    f_object.write("\r\n")
+                    f_object.close()
+
         for row in file:
             numberplate_value = '' # Initialize variable
-            image = img_fetch.load_image_by_url(row[1]) # GET the image by url
-            if(image is not None): # Evaluate image if there is no db error
-                plate = img_plate_detect.get_plate_image(image)
-                numberplate_value = img_to_text.get_text(plate)
-            file_to_complete_data.append([numberplate_value, row[1], row[2]]) # Add a row to a
-            print(rowindex)
+            try:
+                image = img_fetch.load_image_by_url(row[1]) # GET the image by url
+                if(image is not None): # Evaluate image if there is no db error
+                    plate = img_plate_detect.get_plate_image(image)
+                    numberplate_value = img_to_text.get_text(plate)
+                file_to_complete_data = [numberplate_value, row[1], row[2]] # Add a row to a
+                with open(database_out, 'a', newline='') as f_object:
+                    writer_object = csv.writer(f_object, delimiter=delimiter)
+                    writer_object.writerow(file_to_complete_data)
+                    f_object.close()
+                print(f"{rowindex}. -> {numberplate_value}")
+            except Exception as e:
+                print(e)
             rowindex+=1
         
-    with open('database/CirmosCicak.csv', 'w', encoding="utf8", newline ='') as db:  
-        write = csv.writer(db, delimiter=delimiter)
-        write.writerows(file_to_complete_data)
+    #with open(database_out, 'w', encoding="utf8", newline ='') as db:  
+    #    write = csv.writer(db, delimiter=delimiter)
+    #    write.writerows(file_to_complete_data)
 
 def test_debug(img_fetch, img_plate_detect, img_to_text, numberplate):
     images = img_fetch.load_by_numberplate(numberplate)
@@ -104,22 +117,24 @@ def main():
     # The benchmark version contains tagged images, and the other contains only images
     CSV_db_train = "database/HF_train_database.csv" # Labelled images
     CSV_db_app = 'database/HF_final_database_beta.csv' # Images what you want to evaluate
+    CSV_db_OUT = 'database/CirmosCicak.csv' # It stores the generated datas
 
     #Mode selector - Choose the way you want to use the app
-    # Mode 'R': - evaluate images (real-life application)
-    # Mode 'D': - evaluate only one image (Debug application)
-    # Mode 'B': - evaluate the test database (benchmark application)
-    mode = 'D'
+    # Mode 'REAL': - evaluate images (real-life application)
+    # Mode 'DEBUG': - evaluate only one image (Debug application)
+    # Mode 'BENCHMARK': - evaluate the test database (benchmark application)
+    mode = 'BENCHMARK'
+    debug_numberplate = "KYU-882"
 
-    if (mode == 'R'):
+    if (mode == 'REAL'):
         img_f.set_dbpath(CSV_db_app) # Set the path to database
-        test_on_final_database(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, database = CSV_db_app)
-    elif (mode == 'D'):
+        test_on_final_database(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, database = CSV_db_app, database_out = CSV_db_OUT)
+    elif (mode == 'DEBUG'):
         img_f.set_dbpath(CSV_db_train)
-        test_debug(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, numberplate="AYA-599")
-    elif (mode == 'B'):
+        test_debug(img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, numberplate=debug_numberplate)
+    elif (mode == 'BENCHMARK'):
         img_f.set_dbpath(CSV_db_train)
-        test_on_database(start_index = 0, test_number = 400, log = True, img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt)
+        test_on_database(start_index = 0, test_number = 30, log = True, img_fetch=img_f, img_plate_detect=img_pd, img_to_text=img2txt, debug_output_path = debug_output_path)
     else:
         print("Invalid mode")
 
