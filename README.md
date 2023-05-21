@@ -1,5 +1,5 @@
 [//]: # (Image References)
-[image1]: ./assets/BME_logo.jpg "BME"
+[image1]: ./assets/bme_logo.jpg "BME"
 [image2]: ./assets/YOLO_Architecture_from_the_original_paper.png "yolo_architect" 
 [image3]: ./assets/pytesseract_ocr_flowchart.png "pystesseract_ocr_flowchart.png"
 [image4]: ./assets/pytesseract_flowchart.png "pystesseract_flowchart.png"
