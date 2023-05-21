@@ -1,10 +1,12 @@
 [//]: # (Image References)
-[image1]: ./assets/bme_logo.jpg "BME"
+[image1]: ./assets/BME_logo.jpg "BME"
 [image2]: ./assets/YOLO_Architecture_from_the_original_paper.png "yolo_architect" 
 [image3]: ./assets/pytesseract_ocr_flowchart.png "pystesseract_ocr_flowchart.png"
 [image4]: ./assets/pytesseract_flowchart.png "pystesseract_flowchart.png"
 [image5]: ./assets/main_flowchart.drawio.png "pystesseract_flowchart"
 [image6]: ./assets/preprocessing_flowchart.drawio.png "pystesseract_flowchart"
+[image7]: ./assets/plate_examples1.png "plate_examples1"
+[image8]: ./assets/plate_examples2.png "plate_examples2"
 
 
 [comment]: <> (főbb vázlatpontok: bevezető; state-of-the-art technológiák; algoritmus megvalósítása az egyes részváltozatokkal együtt; eredmények, tesztelés; továbbfejlesztési lehetőségek;hivatkozások)
@@ -196,22 +198,44 @@ Az algoritmus hatékonyságát folyamatosan teszteltük a munkafolyamat során, 
 
 Az első verzió hatékonysága a kiemelt kép minimálisan szükséges preprocesszálásával körülbelül 10-15%  volt. A binarizálás, illetve zajszűrési technikák implementálását követően is 40% alatt maradt a felismerési hatékonyság. A perspektíva korrekció, illetve a padding hozzáadásával azonban már szignifikánsan növekedett a hatékonyság: nagyjából 70%-nak bizonyult 1000 képből álló mintán.
 
-A tapasztalataink alapján jellemzően a nagyon torzult képeken bizonyult szuboptimálisnak az algoritmus, illetőleg az árnyékhatások is rontanak a hatékonyságon. Három tipikus hibát tapasztaltunk a tesztelés során:
+A tapasztalataink alapján jellemzően a nagyon torzult képeken tipikusan szuboptimálisnak bizonyult az algoritmus, illetőleg az árnyékhatások is rontanak a hatékonyságon. Három tipikus hibát tapasztaltunk a tesztelés során:
 * gyakran azonosított egy karaktert két másik karakterként (mindamellett, hogy a többi karaktert a rendszámtáblán jól felismerte), illetve
 * egy karaktert szimplán másik karakternek érzékelt, továbbá
 * a rendszám eleji "I" karaktert rendkívül kis hatékonysággal ismerte fel az OCR modul.
 
-Az utóbbi probléma más karakterek elején is fentállt, azonban azok esetében megoldást jelentett a már ismertett fehér keret (padding) hozzáadása a kiemelt kép preprocesszálása során.
-A kép homályossága meglepő módon kevésbé befolyásolta a felismerés hatékonyságát, ez főleg olyan esetekben mutatkozott problémásnak, amikor a kép nem volt kellően kontrasztos.
+Az utóbbi probléma más karakterek elején is fennállt, azonban azok esetében megoldást jelentett a már ismertett fehér keret (padding) hozzáadása a kiemelt kép preprocesszálása során. Az alábbiakban néhány példát ismertetünk az algoritmus működésére vonatkozóan.
+
+![alt text][image7]
+  *<center>6. kép: néhány példa a bemenetből (hi-res) az OCR modulba adott képpel (preprocesszálás után)</center>*
+
+A fenti példák esetében az algoritmus a következő eredményt produkálta:
+* a bal oldali képeken nem ismerte fel a rendszámokat, de különböző okok miatt: a felső képen túl éles szögből készült, így a perspektíva korrekció sem tudta kellően kifeszíteni a képet; az alsó kép esetében pedig a preprocesszálás során kevésbé kontrasztosabbá vált a kép - és habár szabad szemmel jól látható a rendszám - az OCR mégsem ismerte fel, illetve
+* a jobb oldali képeken az algoritmus helyesen ismerte fel a rendszámokat annak ellenére, hogy a felső képen kissé ferde, az alsó képen pedig éles szögből készült a kép.
+
+A részletezett előforduló hibák kapcsán próbálkoztunk a második YOLO által felismert egyes karaktereket betáplálni az OCR algoritmusba, de a felismerés hatékonyága 20% alatt maradt, így ezt a módszert elvetettük.
+
+![alt text][image8]
+*<center>7. kép: további példák a bemenetből (hi-res)az OCR modulba adott képpel (preprocesszálás után)</center>*
+
+A bal oldali kép esetében szintén nem járt sikerrel az algoritmus, mivel az eredeti kép túlexponáltnak bizonyult, amin a preprocesszálási eljárások sem tudtak érdemben javítani. A jobb oldali kép esetében pedig a preprocesszálás sikeresnek mondható volt, azonban a Tesseract OCR modul a "J" karaktert "U" karakterként azonosította, így nem ismerte fel sikeresen a rendszámot.
+
+A képek homályossága meglepő módon kevésbé befolyásolta a felismerés hatékonyságát, ez főleg olyan esetekben mutatkozott problémásnak, amikor a kép nem volt kellően kontrasztos.
 
 Az algoritmus számításigény szempontjából más szakirodalmi algoritmusokhoz képest nem mutatkozott szignifikánsan számításigényesebbnek: a fenti 1000 adatpontból álló bemenet mellett 740 [sec] alatt futott le, ami képenként átlagosan 0,74 [s] futási időt jelentett.
-
-[comment]: <> (ide még jönnek a képek)
 
 
 # 5. Továbbfejlesztési lehetőségek <a name="ides"></a>
 [comment]: <> (TODO)
-[comment]: <> (ide még jön szöveg)
+
+Az algoritmus elsősorban a régi (hagyományos), egysoros, normál méretű, nem egyedi rendszámtábla felismerésére van illesztve. A kétsoros és az új formátumú rendszámtábla helyzetfelismerése megoldott, azonban a rajta lévő karakterek kiolvasása jelenleg problémás.
+
+Mindemellett megfogalmaztunk néhány lehetséges továbbfejlesztési lehetőséget a tapasztalataink alapján a hagyományos rendszámtábla felismerés javítása érdekében:
+- a perspektív transzformáció algoritmusának továbbfejlesztése,
+- a rendszámtábla külső befolglaló éleinek detektálása
+- sarokkereső algoritmus használata,
+- OCR algoritmusának továbbfejlesztése (mivel a szűk keresztmetszetnek az OCR robusztussága bizonyult), illetve
+- a rendszámtábla betűtípusának feltanítása egy már meglévő OCR hálóra (transfer learning),
+- az algoritmus optimalizálása GPU-ra, ezáltal a számítási sebesség növelhető és az erőforrásigény csökkenthető.
 
 # 6. Hivatkozások, felhasznált források <a name="references"></a>
 1. https://arxiv.org/pdf/1506.02640.pdf
@@ -226,12 +250,16 @@ https://github.com/tesseract-ocr/tesseract
 3. https://www.datacamp.com/blog/yolo-object-detection-explained
 4. https://www.section.io/engineering-education/introduction-to-yolo-algorithm-for-object-detection/
 5. https://towardsdatascience.com/yolo-you-only-look-once-real-time-object-detection-explained-492dc9230006
+6. Lubna, Mufti N, Shah SAA. Automatic Number Plate Recognition:
+A Detailed Survey of Relevant Algorithms. Sensors (Basel). 2021 Apr 26;21(9):3028. doi: 10.3390/s21093028.
+(https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8123416/)
+7. https://viso.ai/computer-vision/automatic-number-plate-recognition-anpr/
 
 
+[comment]: <> (a hivatkozott forrásokhoz hyperlink a hivatkozás helyén)
 [1]: <https://arxiv.org/pdf/1506.02640.pdf> "yolo"
 [2]: <https://nanonets.com/blog/ocr-with-tesseract/> "tesseract_general"
 [3]: <https://www.researchgate.net/figure/Tesseract-OCR-engine-process-8_fig2_341936500> "tesseract_process"
-
 
 
 [comment]: <> (credits goes to @KazupD, @KoczihaB, @petroteitamas, @kovszegtom)
