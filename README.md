@@ -121,7 +121,7 @@ A rendszámtábla detektáláshoz a YOLO (You Only Look Once) objektumdetektál�
 * Nagy pontossággal detektál, a hátteret és az objektumot jól szétválasztja - ezt a projekt során magunk is tapasztaltuk.
 * Jó az általánosító képessége, ami a rendszámtáblák esetén különösen fontos, hiszen kevés konkrét közös jellemzője van a rendszámtábláknak, az információ jelentős hányada maguk a rajta szereplő karakterek.
 
-Az algoritmus betanítása 250 db képen történt, amely elegendő számúnak bizonyult a tesztelés során. A betanítás eredményét a **trained_90.pt** fájlban tároltuk el. A YOLO algoritmus hatékonyságát tekintve megfelelőnek mutatkozott a probléma megoldására, a futtatás során nagyon ritkán ütköztünk abba a problémába, hogy egyet sem vagy pedig több rendszámtáblát talált az adott képen. Mindemellett a rendszámtáblát jól adta vissza, nem vágott le belőle karaktereket, és a hátteret is jól kiszűrte, riktán hagyott meg a képen a rendszámtáblán kívül más érdemi objektumot.
+Az algoritmus betanítása 90 db adaton történt, amely elegendő számúnak bizonyult a tesztelés során. A betanítás eredményét a **trained_90.pt** fájlban tároltuk el. (A tanítást elvégeztük 400 adapontra is, azonban ekkora mintán a betanítás paradox módon kevésbé mutatkozott optimálisnak.) A YOLO algoritmus hatékonyságát tekintve megfelelőnek mutatkozott a probléma megoldására, a futtatás során nagyon ritkán ütköztünk abba a problémába, hogy egyet sem vagy pedig több rendszámtáblát talált az adott képen. Mindemellett a rendszámtáblát jól adta vissza, nem vágott le belőle karaktereket, és a hátteret is jól kiszűrte, riktán hagyott meg a képen a rendszámtáblán kívül más érdemi objektumot.
 
 Az első részfeladatot megvalósító **detect_plate** class annak főbb függvényeivel:
 + ***get_plate_image(self, image):*** A rendszámdetektálásra betanított YOLO modul által történő rendszámkiemelés (kimenetként a bounding box két sarkának koordinátáit adja vissza).
@@ -138,7 +138,7 @@ A zajszűrés érdekében különböző méretű (3x3, 5x5, 9x9, 12x12) kernelek
 
 Hibaként felmerült, hogy a szövegfelismerő algoritmus perspektivikusan torzított bemenetet kap, és vélhetően emiatt hibázik. Ennek érdekében a következőképp jártunk el:
 elsőként egy általános perspektív transzformációt hajtunk végre annak érdekében, hogy a rendszámtáblák közel egységesek legyenek, azaz ne legyenek egyik irányba sem jelentősen torzítottak.
-ezt követően betanítottunk egy karaktert, mint objektumot felismerő YOLO algoritmust, ezzel detektálva a rendszámtáblán az első, illetve az utolsó karakter koordinátáit. A betanítást 90 adaton végeztük, a betanítás eredményét a **yolo_custom_char_250.pt** fájlban tároltuk el. Ennek segítségével pedig már egy pontosabb perspektív transzformációt hajtunk végre az első lépés végén kapott képen. A két transzformációt azért tartottuk szükségesnek, mivel így a második YOLO modell precízebbnek mutatkozott, nagy hatékonysággal adta meg a koordinátákat.
+ezt követően betanítottunk egy karaktert, mint objektumot felismerő YOLO algoritmust, ezzel detektálva a rendszámtáblán az első, illetve az utolsó karakter koordinátáit. A betanítást 250 adaton végeztük, a betanítás eredményét a **yolo_custom_char_250.pt** fájlban tároltuk el. Ennek segítségével pedig már egy pontosabb perspektív transzformációt hajtunk végre az első lépés végén kapott képen. A két transzformációt azért tartottuk szükségesnek, mivel így a második YOLO modell precízebbnek mutatkozott, nagy hatékonysággal adta meg a koordinátákat.
 
 Amennyiben a modell nem találta meg a karaktereket, úgy a szürkeárnyalatos képpel dolgoztunk tovább. Amennyiben megtalálta, úgy a transzformált képen három további transzformációt hajtottunk végre:
 először a képhez hozzáadtunk egy fehér keretet, ami javította a szövegfelismerő modul hatékonyságát (enélkül nehezen ismerte fel a kép szélén lévő karaktereket)
@@ -190,9 +190,28 @@ Az átláthatóbb működés érdekében a teljes algoritmus egy adott adatbázi
 
 # 4. Eredmények, tesztelés, konklúzió <a name="results"></a>
 [comment]: <> (TODO)
+Az algoritmus hatékonyságát folyamatosan teszteltük a munkafolyamat során, és igyekeztünk új szubrutinokkal hatékonyabbá tenni azt, így iteratív módon készítettük el a projektfeladatot. 
+
+[comment]: <> (a 10-15% valid?)
+
+Az első verzió hatékonysága a kiemelt kép minimálisan szükséges preprocesszálásával körülbelül 10-15%  volt. A binarizálás, illetve zajszűrési technikák implementálását követően is 40% alatt maradt a felismerési hatékonyság. A perspektíva korrekció, illetve a padding hozzáadásával azonban már szignifikánsan növekedett a hatékonyság: nagyjából 70%-nak bizonyult 1000 képből álló mintán.
+
+A tapasztalataink alapján jellemzően a nagyon torzult képeken bizonyult szuboptimálisnak az algoritmus, illetőleg az árnyékhatások is rontanak a hatékonyságon. Három tipikus hibát tapasztaltunk a tesztelés során:
+* gyakran azonosított egy karaktert két másik karakterként (mindamellett, hogy a többi karaktert a rendszámtáblán jól felismerte), illetve
+* egy karaktert szimplán másik karakternek érzékelt, továbbá
+* a rendszám eleji "I" karaktert rendkívül kis hatékonysággal ismerte fel az OCR modul.
+
+Az utóbbi probléma más karakterek elején is fentállt, azonban azok esetében megoldást jelentett a már ismertett fehér keret (padding) hozzáadása a kiemelt kép preprocesszálása során.
+A kép homályossága meglepő módon kevésbé befolyásolta a felismerés hatékonyságát, ez főleg olyan esetekben mutatkozott problémásnak, amikor a kép nem volt kellően kontrasztos.
+
+Az algoritmus számításigény szempontjából más szakirodalmi algoritmusokhoz képest nem mutatkozott szignifikánsan számításigényesebbnek: a fenti 1000 adatpontból álló bemenet mellett 740 [sec] alatt futott le, ami képenként átlagosan 0,74 [s] futási időt jelentett.
+
+[comment]: <> (ide még jönnek a képek)
+
 
 # 5. Továbbfejlesztési lehetőségek <a name="ides"></a>
 [comment]: <> (TODO)
+[comment]: <> (ide még jön szöveg)
 
 # 6. Hivatkozások, felhasznált források <a name="references"></a>
 1. https://arxiv.org/pdf/1506.02640.pdf
