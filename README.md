@@ -231,10 +231,10 @@ Az algoritmus elsősorban a régi (hagyományos), egysoros, normál méretű, ne
 
 Mindemellett megfogalmaztunk néhány lehetséges továbbfejlesztési lehetőséget a tapasztalataink alapján a hagyományos rendszámtábla felismerés javítása érdekében:
 - a perspektív transzformáció algoritmusának továbbfejlesztése,
-- a rendszámtábla külső befolglaló éleinek detektálása
+- a rendszámtábla külső befolglaló éleinek detektálása,
 - sarokkereső algoritmus használata,
-- OCR algoritmusának továbbfejlesztése (mivel a szűk keresztmetszetnek az OCR robusztussága bizonyult), illetve
-- a rendszámtábla betűtípusának feltanítása egy már meglévő OCR hálóra (transfer learning),
+- OCR algoritmusának továbbfejlesztése (mivel a szűk keresztmetszetnek az OCR robusztussága bizonyult),
+- a rendszámtábla betűtípusának feltanítása egy már meglévő OCR hálóra (transfer learning), illetve
 - az algoritmus optimalizálása GPU-ra, ezáltal a számítási sebesség növelhető és az erőforrásigény csökkenthető.
 
 # 6. Hivatkozások, felhasznált források <a name="references"></a>
