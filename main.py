@@ -6,6 +6,7 @@ import cv2
 import os
 import csv
 import time
+import sys
 
 #### Program paramatres
 debug_output_path = "output" # Image output folder
@@ -83,6 +84,35 @@ def test_on_final_database(img_fetch, img_plate_detect, img_to_text):
         write = csv.writer(db, delimiter=delimiter)
         write.writerows(file_to_complete_data)
 
+def evaluate_in_custom_directory(img_plate_detect, img_to_text):
+    file_to_complete_data = []
+    if len(sys.argv) == 2:
+        dir = sys.argv[1]
+    else:
+        print("Usage: python main.py folder-to-evaluate")
+    
+    files = os.listdir(dir)
+    test_number = len(files)
+    start_time = time.time()
+
+    for index, file in enumerate(files):
+        numberplate_value = '' # Initialize variable
+        image = cv2.imread(dir+file)
+        if(image is not None): # Evaluate image if there is no db error
+            plate = img_plate_detect.get_plate_image(image)
+            numberplate_value = img_to_text.get_text(plate)
+        file_to_complete_data.append([file, numberplate_value])
+        print(index)
+
+    with open('database/CirmosCicak.csv', 'w', encoding="utf8", newline ='') as db:  
+        write = csv.writer(db, delimiter=delimiter)
+        write.writerows(file_to_complete_data)
+
+    finish_time = time.time()
+    total_time = round(finish_time-start_time, 3)
+    average_time = round(total_time/test_number, 3)
+    print("Total time: " + str(total_time) + " s")
+    print("Average time: " + str(average_time) + " s")
 
 def main():
     # Create object 
@@ -94,7 +124,7 @@ def main():
     # Mode 0: - evaluate images (real-life application)
     # Mode 1: - evaluate only one image (Debug application)
     # Mode 2: - evaluate the test database (benchmark application)
-    mode = 2
+    mode = 3
     if (mode == 0):
         img_fetch.set_dbpath(CSVdatabase_path) # Set the path to database
         test_on_final_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
@@ -109,7 +139,8 @@ def main():
     elif (mode == 2):
         img_fetch.set_dbpath(benchmark_CSVdatabase_path)
         test_on_database(img_fetch=img_fetch, img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
-
+    elif (mode == 3):
+        evaluate_in_custom_directory(img_plate_detect=img_plate_detect, img_to_text=img_to_txt)
 
 if __name__ == "__main__":
     main()
